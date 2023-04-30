@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# This script installs and configures an nginx server to add a custom header to HTTP responses.
+
+# Update package lists and install nginx
+apt-get update
+apt-get install nginx -y
+
+# Create index.html and custom_404.html files
+echo "Hello World!" > /var/www/html/index.html
+echo "Ceci n'est pas une page" > /var/www/html/custom_404.html
+
+# Configure nginx server block
+printf %s "
+server {
+    listen      80 default_server;
+    listen      [::]:80 default_server;
+    root        /var/www/html;
+    index       index.html index.htm;
+    add_header  X-Served-By \$HOSTNAME;
+
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+
+    error_page 404 /custom_404.html;
+    location /custom_404 {
+        root /var/www/html;
+        internal;
+    }
+}
+" > /etc/nginx/sites-available/default
+
+# Restart nginx service
+service nginx restart
+
