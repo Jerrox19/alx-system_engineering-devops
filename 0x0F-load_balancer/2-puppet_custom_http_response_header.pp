@@ -1,3 +1,4 @@
+# puppet scrit
 exec { 'install_nginx_and_configure_header':
   command  => 'apt-get -y update && apt-get -y install nginx',
   path     => '/usr/bin',
